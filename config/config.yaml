@@ -4,4 +4,89 @@ data_ingestion:
   raw_data_path: artifacts/raw.csv
   train_data_path: artifacts/train.csv
   test_data_path: artifacts/test.csv
-  source_data_path: data/raw/AmesHousing.csv
+  source_data_path: C:\Users\Ayan\Documents\GitHub\AIML\House Prices Prediction\data\raw data\AmesHousing.csv
+  
+COLUMNS:
+  Order: int
+  PID: int
+  MS SubClass: int
+  MS Zoning: object
+  Lot Frontage: float
+  Lot Area: int
+  Street: object
+  Alley: object
+  Lot Shape: object
+  Land Contour: object
+  Utilities: object
+  Lot Config: object
+  Land Slope: object
+  Neighborhood: object
+  Condition 1: object
+  Condition 2: object
+  Bldg Type: object
+  House Style: object
+  Overall Qual: int
+  Overall Cond: int
+  Year Built: int
+  Year Remod/Add: int
+  Roof Style: object
+  Roof Matl: object
+  Exterior 1st: object
+  Exterior 2nd: object
+  Mas Vnr Type: object
+  Mas Vnr Area: float
+  Exter Qual: object
+  Exter Cond: object
+  Foundation: object
+  Bsmt Qual: object
+  Bsmt Cond: object
+  Bsmt Exposure: object
+  BsmtFin Type 1: object
+  BsmtFin SF 1: float
+  BsmtFin Type 2: object
+  BsmtFin SF 2: float
+  Bsmt Unf SF: float
+  Total Bsmt SF: float
+  Heating: object
+  Heating QC: object
+  Central Air: object
+  Electrical: object
+  1st Flr SF: int
+  2nd Flr SF: int
+  Low Qual Fin SF: int
+  Gr Liv Area: int
+  Bsmt Full Bath: float
+  Bsmt Half Bath: float
+  Full Bath: int
+  Half Bath: int
+  Bedroom AbvGr: int
+  Kitchen AbvGr: int
+  Kitchen Qual: object
+  TotRms AbvGrd: int
+  Functional: object
+  Fireplaces: int
+  Fireplace Qu: object
+  Garage Type: object
+  Garage Yr Blt: float
+  Garage Finish: object
+  Garage Cars: float
+  Garage Area: float
+  Garage Qual: object
+  Garage Cond: object
+  Paved Drive: object
+  Wood Deck SF: int
+  Open Porch SF: int
+  Enclosed Porch: int
+  Enclosed Porch: int
+  3Ssn Porch: int
+  Screen Porch: int
+  Pool Area: int
+  Pool QC: object
+  Fence: object
+  Misc Feature: object
+  Misc Val: int
+  Mo Sold: int
+  Yr Sold: int
+  Sale Type: object
+  Sale Condition: object
+  SalePrice: int
