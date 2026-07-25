@@ -30,37 +30,32 @@ class ModelTrainer:
 
     def initiate_model_training(self, X_train, y_train, X_test, y_test):
         
-		models = {
-			"Linear Regression": LinearRegression(),
-			"Ridge": Ridge(),
-			"Lasso": Lasso(),
-			"ElasticNet": ElasticNet(),
-			"Decision Tree": DecisionTreeRegressor(random_state=42),
-			"Random Forest": RandomForestRegressor(random_state=42),
-			"XGBoost": XGBRegressor(random_state=42)
-		}
-		trained_models = {}
+        models = {
+            "Linear Regression": LinearRegression(),
+            "Ridge": Ridge(),
+            "Lasso": Lasso(max_iter=100000,selection="cyclic"),
+            "ElasticNet": ElasticNet(max_iter=100000,selection="cyclic"),
+            "Decision Tree": DecisionTreeRegressor(random_state=42,criterion='poisson'),
+            "Random Forest": RandomForestRegressor(bootstrap=False,n_estimators=153,random_state=42),
+            "XGBoost": XGBRegressor(random_state=42)
+        }
+        
+        report = evaluate_models(
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            models
+        )
+        logger.info(" ")        
+        logger.info(" ")
+        logger.info(" ")
 
-		for name, model in models.items():
-
-			model.fit(X_train, y_train)
-			logger.info(f"Training {name}")
-
-
-			predictions = model.predict(X_test)
-
-			logger.info(f"{name} R2 Score: {score:.4f}")
-
-
-		report = evaluate_models(
-			X_train,
-			y_train,
-			X_test,
-			y_test,
-			models
-		)
-		best_model = max(
-			report,
-			key=lambda x: report[x]["R2"]
-		)
-		return report, trained_models
+        for name, scores in report.items():
+            logger.info(f"{name} R2 Score: {scores['R2']:.4f}")
+            
+        best_model = max(
+            report,
+            key=lambda x: report[x]["R2"]
+        )
+        return report, models

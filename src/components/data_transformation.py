@@ -24,7 +24,7 @@ class DataTransformation:
 
         cat_pipeline = Pipeline([
             ("imputer", SimpleImputer(strategy="most_frequent")),
-            ("encoder", OneHotEncoder(handle_unknown="ignore"))
+            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
         ])
         num_cols = X_train.select_dtypes(
             include=["int64", "float64"]
@@ -47,10 +47,10 @@ class DataTransformation:
             test_df = pd.read_csv(self.config.get_data_ingestion_config().test_data_path)
             target_column = "SalePrice"
 
-            X_train = train_df.drop(columns=[target_column], axis=1)
+            X_train = train_df.drop(columns=[target_column])
             y_train = train_df[target_column]
 
-            X_test = test_df.drop(columns=[target_column], axis=1)
+            X_test = test_df.drop(columns=[target_column])
             y_test = test_df[target_column]
             logger.info("Applying preprocessing pipeline")
             preprocessor = self.get_preprocessor(X_train)

@@ -22,6 +22,9 @@ class DataValidation:
                 "int64": "int",
                 "float64": "float",
                 "object": "object",
+                "str": "object",
+                "string": "object",
+                "O": "object",
             }
 
             for column, expected_dtype in self.schema.items():

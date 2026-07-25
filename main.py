@@ -37,8 +37,8 @@ def main():
         )
 
         # Get the best model
-        best_model_name = max(report, key=lambda x: report[x])
-        best_score = report[best_model_name]
+        best_model_name = max(report, key=lambda x: report[x]["R2"])
+        best_score = report[best_model_name]["R2"]
 
         logger.info(f"Best Model : {best_model_name}")
         logger.info(f"Best R2 Score : {best_score}")
