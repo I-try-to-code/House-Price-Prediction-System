@@ -10,8 +10,9 @@ from sklearn.linear_model import (
 from src.utils import evaluate_models
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-
+from sklearn.model_selection import GridSearchCV
 from xgboost import XGBRegressor
+from sklearn.model_selection import RandomizedSearchCV
 
 from sklearn.metrics import (
     r2_score,
@@ -35,9 +36,9 @@ class ModelTrainer:
             "Ridge": Ridge(),
             "Lasso": Lasso(max_iter=100000,selection="cyclic"),
             "ElasticNet": ElasticNet(max_iter=100000,selection="cyclic"),
-            "Decision Tree": DecisionTreeRegressor(random_state=42,criterion='poisson'),
-            "Random Forest": RandomForestRegressor(bootstrap=False,n_estimators=153,random_state=42),
-            "XGBoost": XGBRegressor(random_state=42)
+            "Decision Tree": DecisionTreeRegressor(random_state=42),
+            "Random Forest": RandomForestRegressor(random_state=42),
+            "XGBoost": XGBRegressor(random_state=42,booster="gbtree",learning_rate=0.3)
         }
         
         report = evaluate_models(
@@ -52,10 +53,110 @@ class ModelTrainer:
         logger.info(" ")
 
         for name, scores in report.items():
-            logger.info(f"{name} R2 Score: {scores['R2']:.4f}")
+            logger.info(f"{name} R2 Score: {scores['R2']:.4f} | MAE: {scores['MAE']:.4f} | RMSE: {scores['RMSE']:.4f} | CV Mean: {scores['CV Mean']:.4f} | CV Std: {scores['CV Std']:.4f}")
             
-        best_model = max(
+        best_model_name = max(
             report,
             key=lambda x: report[x]["R2"]
         )
-        return report, models
+        best_model = models[best_model_name]
+        model_path = os.path.join("artifacts", "model.pkl")
+
+        if best_model_name in ["Random Forest", "XGBoost"]:
+            logger.info(f"Starting Hyperparameter Tuning for {best_model_name}...")
+            
+            if best_model_name == "Random Forest":
+                param_grid = {
+                    "n_estimators": [100, 200, 300],
+                    "max_depth": [10, 20, None],
+                    "min_samples_split": [2, 5, 10],
+                    "min_samples_leaf": [1, 2, 4]
+                }
+                grid_search = GridSearchCV(
+                    estimator=RandomForestRegressor(random_state=42),
+                    param_grid=param_grid,
+                    scoring="r2",
+                    cv=5,
+                    n_jobs=-1,
+                    verbose=1
+                )   
+                    
+                grid_search.fit(X_train, y_train)
+                best_model = grid_search.best_estimator_
+                y_pred = best_model.predict(X_test)
+
+                tuned_r2 = r2_score(y_test, y_pred)
+                
+                logger.info(f"--- TUNING RESULTS FOR {best_model_name} ---")
+                logger.info(f"Best Hyperparameters: {grid_search.best_params_}")
+                logger.info(f"Best Tuned CV R2 Score: {grid_search.best_score_:.4f}")
+                logger.info(f"Best Tuned Test R2 Score: {tuned_r2:.4f}")
+                logger.info("------------------------------------------")
+                if tuned_r2 > baseline_r2:
+                    logger.info("Tuned model performed better. Saving tuned model.")
+                    final_model = best_model
+                else:
+                    logger.info("Baseline model performed better. Saving baseline model.")
+                    final_model = models[best_model_name]
+
+                # Save the final best model (tuned or base)
+                save_object(
+                    file_path=model_path,
+                    obj=final_model
+                )
+                logger.info(f"Saved {best_model_name} to {model_path}")
+                    
+                return report, models
+              
+
+            elif best_model_name == "XGBoost":  
+                param_dist = {
+                    "n_estimators": [100, 200, 300, 500],
+                    "learning_rate": [0.01, 0.05, 0.1, 0.2,0.3],
+                    "max_depth": [3, 5, 7, 10],
+                    "subsample": [0.6, 0.8, 1.0],
+                    "colsample_bytree": [0.6, 0.8, 1.0],
+                    "min_child_weight": [1, 3, 5],
+                    "gamma": [0, 0.1, 0.3]
+                }
+                random_search = RandomizedSearchCV(
+                    estimator=XGBRegressor( random_state=42,
+                    objective="reg:squarederror" ), param_distributions=param_dist,n_iter=25,scoring="r2",
+                    cv=5,
+                    random_state=42,
+                    n_jobs=-1,
+                    verbose=1
+                )
+                random_search.fit(X_train, y_train)
+                baseline_r2 = report[best_model_name]["R2"]
+                best_model = random_search.best_estimator_
+                best_params = random_search.best_params_
+                best_cv_score = random_search.best_score_
+                y_pred = best_model.predict(X_test)
+                tuned_r2 = r2_score(y_test, y_pred)
+                
+                logger.info(f"--- TUNING RESULTS FOR {best_model_name} ---")
+                logger.info(f"Best Hyperparameters: {best_params}")
+                logger.info(f"Best Tuned CV R2 Score: {best_cv_score:.4f}")
+                logger.info(f"Best Tuned Test R2 Score: {tuned_r2:.4f}")
+                logger.info("------------------------------------------")
+                if tuned_r2 > baseline_r2:
+                    logger.info("Tuned model performed better. Saving tuned model.")
+                    final_model = best_model
+                else:
+                    logger.info("Baseline model performed better. Saving baseline model.")
+                    final_model = models[best_model_name]
+
+                # Save the final best model (tuned or base)
+                save_object(
+                    file_path=model_path,
+                    obj=final_model
+                )
+                logger.info(f"Saved {best_model_name} to {model_path}")
+                    
+                return report, models
+                
+                
+           
+            # Run grid search
+           
