@@ -7,6 +7,21 @@ from sklearn.linear_model import (
     Lasso,
     ElasticNet
 )
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+experiment_name = "House_Price_Prediction"
+try:
+    mlflow.create_experiment(
+        experiment_name,
+        artifact_location=f"file:///{os.path.abspath('mlruns')}"
+    )
+except Exception:
+    pass
+mlflow.set_experiment(experiment_name)
+
 from src.utils import evaluate_models
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -22,7 +37,7 @@ from sklearn.metrics import (
 
 from src.logger import logger
 from src.exception import CustomException
-from src.utils import save_object
+from src.utils import save_object, load_object
 
 class ModelTrainer:
 
@@ -95,9 +110,20 @@ class ModelTrainer:
                 if tuned_r2 > baseline_r2:
                     logger.info("Tuned model performed better. Saving tuned model.")
                     final_model = best_model
+                    final_r2 = tuned_r2
+                    final_mae = mean_absolute_error(y_test, y_pred)
+                    final_rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+                    
+                    # Update report so main.py prints the tuned score
+                    report[best_model_name]["R2"] = final_r2
+                    report[best_model_name]["MAE"] = final_mae
+                    report[best_model_name]["RMSE"] = final_rmse
                 else:
                     logger.info("Baseline model performed better. Saving baseline model.")
                     final_model = models[best_model_name]
+                    final_r2 = baseline_r2
+                    final_mae = report[best_model_name]["MAE"]
+                    final_rmse = report[best_model_name]["RMSE"]
 
                 # Save the final best model (tuned or base)
                 save_object(
@@ -105,7 +131,16 @@ class ModelTrainer:
                     obj=final_model
                 )
                 logger.info(f"Saved {best_model_name} to {model_path}")
-                    
+                with mlflow.start_run(run_name=f"{best_model_name}_Tuned"):
+                    mlflow.log_param("model", best_model_name)
+                    mlflow.log_params(grid_search.best_params_)
+                    mlflow.log_metric("R2", final_r2)
+                    mlflow.log_metric("MAE", final_mae)
+                    mlflow.log_metric("RMSE", final_rmse)
+                    mlflow.sklearn.log_model(
+                    sk_model=final_model,
+                    artifact_path="model"
+                    )
                 return report, models
               
 
@@ -143,9 +178,20 @@ class ModelTrainer:
                 if tuned_r2 > baseline_r2:
                     logger.info("Tuned model performed better. Saving tuned model.")
                     final_model = best_model
+                    final_r2 = tuned_r2
+                    final_mae = mean_absolute_error(y_test, y_pred)
+                    final_rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+                    
+                    # Update report so main.py prints the tuned score
+                    report[best_model_name]["R2"] = final_r2
+                    report[best_model_name]["MAE"] = final_mae
+                    report[best_model_name]["RMSE"] = final_rmse
                 else:
                     logger.info("Baseline model performed better. Saving baseline model.")
                     final_model = models[best_model_name]
+                    final_r2 = baseline_r2
+                    final_mae = report[best_model_name]["MAE"]
+                    final_rmse = report[best_model_name]["RMSE"]
 
                 # Save the final best model (tuned or base)
                 save_object(
@@ -153,7 +199,32 @@ class ModelTrainer:
                     obj=final_model
                 )
                 logger.info(f"Saved {best_model_name} to {model_path}")
-                    
+                with mlflow.start_run(run_name=f"{best_model_name}_Tuned"):
+                    mlflow.log_param("model", best_model_name)
+                    mlflow.log_params(random_search.best_params_)
+                    mlflow.log_metric("R2", final_r2)
+                    mlflow.log_metric("MAE", final_mae)
+                    mlflow.log_metric("RMSE", final_rmse)
+                    mlflow.sklearn.log_model(
+                        sk_model=final_model,
+                        artifact_path="model",
+                        skops_trusted_types=["xgboost.core.Booster", "xgboost.sklearn.XGBRegressor"]
+                    )
+                
+                preprocessor = load_object(os.path.join("artifacts", "preprocessor.pkl"))
+                feature_names = preprocessor.get_feature_names_out()
+
+                importance_df = pd.DataFrame({
+                    "Feature": feature_names,
+                    "Importance": best_model.feature_importances_
+                })
+
+                importance_df = importance_df.sort_values(
+                    by="Importance",
+                    ascending=False
+                )
+
+                print(importance_df.head(20))
                 return report, models
                 
                 
