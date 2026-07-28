@@ -21,6 +21,26 @@ UI Website for user to input details about the house
 
 Option to add 18 additional fields to get more accurate estimate of the house price
 ![alt text](image-4.png)
+## 🔄 Prediction Flow
+
+```text
+User
+   │
+   ▼
+Streamlit UI
+   │
+   ▼
+Prediction Pipeline
+   │
+   ▼
+Preprocessor.pkl
+   │
+   ▼
+Random Forest Model
+   │
+   ▼
+Predicted Price
+```
 
 ## 🧠 The Model
 
