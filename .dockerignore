@@ -7,3 +7,11 @@ artifacts/logs/
 venv/
 mlruns/
 mlflow.db
+.git
+.gitignore
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+venv/
+.venv/
