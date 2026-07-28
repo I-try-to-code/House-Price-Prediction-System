@@ -13,49 +13,94 @@ st.set_page_config(
 # --- Custom Styling ---
 st.markdown("""
 <style>
-    /* Minimal White Theme Enhancements */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+    
+    /* Global Theme */
     .stApp {
-        background-color: #FAFAFA;
-        color: #333333;
-        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%);
+        color: #1e293b;
+        font-family: 'Outfit', sans-serif;
     }
+    
+    /* Main Container Glassmorphism */
     .main .block-container {
         padding-top: 2rem;
-        max-width: 800px;
+        padding-bottom: 3rem;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        max-width: 850px;
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
     }
-    h1, h2, h3 {
-        color: #111827;
-        font-weight: 600;
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        font-family: 'Outfit', sans-serif !important;
+        letter-spacing: -0.5px;
     }
+    
+    /* Premium Predict Button */
     .stButton>button {
         width: 100%;
-        background-color: #000000;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: #ffffff;
         border: none;
-        padding: 0.75rem 0;
-        border-radius: 8px;
-        font-size: 1.1rem;
+        padding: 0.85rem 0;
+        border-radius: 12px;
+        font-size: 1.15rem;
         font-weight: 600;
-        transition: all 0.2s ease-in-out;
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
     }
     .stButton>button:hover {
-        background-color: #333333;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.23);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         color: #ffffff;
     }
-    .success-card {
-        background-color: #ffffff;
-        border-left: 5px solid #10B981;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        margin-top: 2rem;
-        text-align: center;
+    .stButton>button:active {
+        transform: translateY(1px);
     }
+    
+    /* Premium Success Card */
+    .success-card {
+        background: #ffffff;
+        border-left: 6px solid #10B981;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
+        margin-top: 2.5rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    .success-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    /* Price Text Gradient */
     .price-text {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #10B981;
+        font-size: 3.2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin: 0.5rem 0;
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: -1px;
+    }
+    
+    /* Sidebar Aesthetics */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff;
+        border-right: 1px solid #e2e8f0;
     }
 </style>
 """, unsafe_allow_html=True)
