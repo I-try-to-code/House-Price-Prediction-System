@@ -1,6 +1,6 @@
 # 🏡 House Price Prediction
 
-A complete end-to-end Machine Learning project to predict house prices using the Ames Housing Dataset. I built this project to cover the entire lifecycle of an ML application—from data ingestion and training to model tracking and deploying a clean, modern web interface.
+A complete end-to-end Machine Learning project to predict house prices using the Ames Housing Dataset (https://www.kaggle.com/datasets/shashanknecrothapa/ames-housing-dataset/data). I built this project to cover the entire lifecycle of an ML application—from data ingestion and training to model tracking and deploying a clean, modern web interface.
 
 ## 🚀 Features
 
