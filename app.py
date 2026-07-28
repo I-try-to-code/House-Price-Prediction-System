@@ -51,9 +51,9 @@ st.markdown("""
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: #ffffff;
         border: none;
-        padding: 0.85rem 0;
+        padding: 1rem 2rem;
         border-radius: 12px;
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         font-weight: 600;
         font-family: 'Outfit', sans-serif;
         letter-spacing: 0.5px;
