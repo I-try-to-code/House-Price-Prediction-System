@@ -39,7 +39,7 @@ venv.bak/
 *.csv
 *.xlsx
 .ipynb_checkpoints/
-artifacts/
+
 
 # System
 .DS_Store
@@ -68,7 +68,6 @@ logs/
 mlruns/
 
 # Artifacts
-artifacts/
 
 # Environment Variables
 .env
