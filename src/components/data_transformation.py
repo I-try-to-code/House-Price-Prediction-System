@@ -52,6 +52,45 @@ class DataTransformation:
 
             X_test = test_df.drop(columns=[target_column])
             y_test = test_df[target_column]
+            required_features = [
+                "Overall Qual",
+                "Garage Cars",
+                "Kitchen Qual",
+                "Bsmt Qual",
+                "MS Zoning",
+                "Neighborhood",
+                "Exter Qual",
+                "Full Bath",
+                "Garage Finish",
+                "Gr Liv Area",
+                "1st Flr SF",
+                "Total Bsmt SF"
+            ]
+
+            optional_features = [
+                "Land Contour",
+                "Fireplaces",
+                "Central Air",
+                "Bsmt Exposure",
+                "Sale Condition",
+                "Exterior 1st",
+                "Exterior 2nd",
+                "2nd Flr SF",
+                "Paved Drive",
+                "Kitchen AbvGr",
+                "Sale Type",
+                "Foundation",
+                "BsmtFin SF 1",
+                "Roof Matl",
+                "Roof Style",
+                "Year Built",
+                "Bsmt Full Bath",
+                "Garage Type"
+            ]
+            selected_features = required_features + optional_features
+            X_train = X_train[selected_features]
+            X_test = X_test[selected_features]
+
             logger.info("Applying preprocessing pipeline")
             preprocessor = self.get_preprocessor(X_train)
 
